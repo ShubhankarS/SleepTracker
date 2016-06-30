@@ -1,4 +1,4 @@
-package com.stayclose.sleepcapture;
+package com.shubhankar.sleeptracker;
 
 /**
  * Created by Shubhankar on 24/02/16.

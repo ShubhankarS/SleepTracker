@@ -1,4 +1,4 @@
-package com.stayclose.sleepcapture;
+package com.shubhankar.sleeptracker;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

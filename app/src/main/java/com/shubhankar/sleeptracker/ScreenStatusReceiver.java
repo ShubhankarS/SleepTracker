@@ -1,4 +1,4 @@
-package com.stayclose.sleepcapture;
+package com.shubhankar.sleeptracker;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

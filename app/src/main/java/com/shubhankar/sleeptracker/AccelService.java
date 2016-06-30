@@ -1,4 +1,4 @@
-package com.stayclose.sleepcapture;
+package com.shubhankar.sleeptracker;
 
 import android.app.NotificationManager;
 import android.app.Service;

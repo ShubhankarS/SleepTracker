@@ -1,4 +1,4 @@
-package com.stayclose.sleepcapture;
+package com.shubhankar.sleeptracker;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

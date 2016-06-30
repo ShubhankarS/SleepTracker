@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.stayclose.sleepcapture">
+    package="com.shubhankar.sleeptracker">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -18,7 +18,7 @@
             android:name="android.hardware.sensor.light "
             android:required="true" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name="com.shubhankar.sleeptracker.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,10 +26,10 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".AccelService" />
+        <service android:name="com.shubhankar.sleeptracker.AccelService" />
 
         <receiver
-            android:name=".ScreenStatusReceiver"
+            android:name="com.shubhankar.sleeptracker.ScreenStatusReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -43,9 +43,9 @@
         </receiver>
 
         <activity
-            android:name=".HorizontalBarChartActivity"
+            android:name="com.shubhankar.sleeptracker.HorizontalBarChartActivity"
             android:label="@string/title_activity_horizontal_bar_chart"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

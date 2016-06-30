@@ -1,4 +1,4 @@
-package com.stayclose.sleepcapture;
+package com.shubhankar.sleeptracker;
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.PointF;

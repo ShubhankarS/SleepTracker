@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.stayclose.sleepcapture"
+        applicationId "com.shubhankar.sleepcapture"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
