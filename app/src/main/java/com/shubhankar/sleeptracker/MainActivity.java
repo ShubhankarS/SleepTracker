@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
             boolean mkdirs = dir.mkdirs();
         }
 
-        String imageName = "graph" + new DateTime().toString("YYYY-MM-DD(") + new Random().nextInt(10) + ").jpeg";
+        String imageName = "captured@" + new DateTime().toString("YYYY-MM-dd hh:mm:ss") + ".jpeg";
         File imageFile = new File(dir, imageName);
 
         try {
