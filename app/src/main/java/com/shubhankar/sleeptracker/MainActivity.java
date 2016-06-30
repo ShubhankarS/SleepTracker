@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
         return finalData;
     }
 
-    public ArrayList<SleepState> cleanData(ArrayList<SleepState> originalData, float trimInterval, int iteration) {
+    private ArrayList<SleepState> cleanData(ArrayList<SleepState> originalData, float trimInterval, int iteration) {
         Log.d("Size received", "for cleanup " + originalData.size());
         ArrayList<SleepState> processedData = new ArrayList<>();
         ArrayList<SleepState> interrupts = new ArrayList<>();
@@ -176,13 +176,13 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
                 }
             }
         }
-        Gson gson1 = new Gson();
-        Log.d("Cleanup round", iteration + " interrupts found = " + interrupts.size() /*+
-                ", interrupts = " + gson1.toJson(interrupts).toString()*/);
+//        Gson gson1 = new Gson();
+//        Log.d("Cleanup round", iteration + " interrupts found = " + interrupts.size() /*+
+//                ", interrupts = " + gson1.toJson(interrupts).toString()*/);
         return processedData;
     }
 
-    public void startMonitoringAccelerometer() {
+    private void startMonitoringAccelerometer() {
         Calendar cal = Calendar.getInstance();
         Intent intent = new Intent(this, AccelService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 3, intent, 0);

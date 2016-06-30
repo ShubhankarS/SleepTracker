@@ -11,7 +11,7 @@ import android.util.Log;
 public class ScreenStatusReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("Test","Test");
+        Log.d("Test", "Test");
         Intent intent1 = new Intent(context, AccelService.class);
         context.startService(intent1);
     }

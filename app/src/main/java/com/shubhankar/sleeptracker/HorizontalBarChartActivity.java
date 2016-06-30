@@ -1,4 +1,5 @@
 package com.shubhankar.sleeptracker;
+
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.PointF;
@@ -36,24 +37,23 @@ import java.util.List;
 public class HorizontalBarChartActivity extends AppCompatActivity implements OnSeekBarChangeListener,
         OnChartValueSelectedListener {
 
-    protected HorizontalBarChart mChart;
+    private HorizontalBarChart mChart;
     private SeekBar mSeekBarX, mSeekBarY;
     private TextView tvX, tvY;
 
 //    private Typeface tf;
 
 
-    protected String[] mMonths = new String[] {
+    protected String[] mMonths = new String[]{
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
     };
 
-    protected String[] mParties = new String[] {
+    protected String[] mParties = new String[]{
             "Party A", "Party B", "Party C", "Party D", "Party E", "Party F", "Party G", "Party H",
             "Party I", "Party J", "Party K", "Party L", "Party M", "Party N", "Party O", "Party P",
             "Party Q", "Party R", "Party S", "Party T", "Party U", "Party V", "Party W", "Party X",
             "Party Y", "Party Z"
     };
-
 
 
     @Override
@@ -153,8 +153,8 @@ public class HorizontalBarChartActivity extends AppCompatActivity implements OnS
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-        tvX.setText("" + (mSeekBarX.getProgress() + 1));
-        tvY.setText("" + (mSeekBarY.getProgress()));
+        tvX.setText(String.format("%d", mSeekBarX.getProgress() + 1));
+        tvY.setText(String.format("%d", mSeekBarY.getProgress()));
 
         setData(mSeekBarX.getProgress() + 1, mSeekBarY.getProgress());
         mChart.invalidate();
@@ -174,10 +174,8 @@ public class HorizontalBarChartActivity extends AppCompatActivity implements OnS
 
     private void setData(int count, float range) {
 
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
-        ArrayList<String> xVals = new ArrayList<String>();
-
-
+        ArrayList<BarEntry> yVals1 = new ArrayList<>();
+        ArrayList<String> xVals = new ArrayList<>();
 
 
         Gson gson = new Gson();
@@ -195,7 +193,7 @@ public class HorizontalBarChartActivity extends AppCompatActivity implements OnS
 
         BarDataSet set1 = new BarDataSet(yVals1, "DataSet 1");
 
-        ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
 
 //        BarData data = new BarData(xVals, dataSets);
@@ -220,5 +218,5 @@ public class HorizontalBarChartActivity extends AppCompatActivity implements OnS
     }
 
     public void onNothingSelected() {
-    };
+    }
 }

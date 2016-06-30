@@ -30,21 +30,20 @@ import java.util.List;
 public class AccelService extends Service implements SensorEventListener {
     private SensorManager mSensMan;
     private Sensor accelerometer, light;
-    boolean moving;
-    boolean walk;
-    long startService;
-    SharedPreferences preference;
-    float relativeGravity;
+    private boolean moving;
+    private boolean walk;
+    private long startService;
+    private SharedPreferences preference;
+    private float relativeGravity;
     //some notification parameters
-    NotificationManager notificationManager;
+    private NotificationManager notificationManager;
 
-    SleepData sleepData;
-    List<SleepData> sleepDataList;
-
+    private SleepData sleepData;
+    private List<SleepData> sleepDataList;
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
         sleepData = new SleepData();
         String data = preference.getString(MainActivity.DATA_LIST, "");
         Gson gson = new Gson();
@@ -70,6 +69,8 @@ public class AccelService extends Service implements SensorEventListener {
         //register accelerometer listener
         mSensMan.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensMan.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL);
+
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override

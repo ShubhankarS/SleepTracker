@@ -10,23 +10,24 @@ import java.util.ArrayList;
 /**
  * Created by Shubhankar on 25/02/16.
  */
-public class SleepState {
+class SleepState {
     @Expose
     @SerializedName("start_time")
-    long startTime;
+    private long startTime;
 
     @Expose
     @SerializedName("end_time")
-    long endTime;
+    private long endTime;
 
     @Expose
     @SerializedName("is_sleeping")
-    boolean isSleeping;
+    private boolean isSleeping;
 
-    ArrayList<Float> lightReadings, accelerometerReadings;
-    ArrayList<Boolean> screenStates;
+    private ArrayList<Float> lightReadings;
+    private ArrayList<Float> accelerometerReadings;
+    private ArrayList<Boolean> screenStates;
 
-    public long getStartTime() {
+    private long getStartTime() {
         return startTime;
     }
 

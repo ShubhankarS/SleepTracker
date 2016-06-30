@@ -25,9 +25,9 @@ import java.util.List;
 /**
  * Created by Shubhankar on 24/02/16.
  */
-public class Adapter extends BaseAdapter {
+class Adapter extends BaseAdapter {
 
-    List<SleepState> sleepDatas;
+    private List<SleepState> sleepDatas;
     private ViewLongClickListener mListener;
 
     Adapter(List<SleepState> sleepDatas, ViewLongClickListener mListener) {
@@ -52,7 +52,14 @@ public class Adapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.data_item, parent, false);
+        View view;
+
+        if (convertView == null) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.data_item, parent, false);
+        } else {
+            view = convertView;
+        }
+
         TextView five = (TextView) view.findViewById(R.id.five);
         LineChart accelChart = (LineChart) view.findViewById(R.id.accel_graph);
         LineChart lightChart = (LineChart) view.findViewById(R.id.light_graph);
@@ -60,11 +67,11 @@ public class Adapter extends BaseAdapter {
 
         SleepState current = sleepDatas.get(position);
         if (!current.isSleeping()) {
-            five.setText("Awake :" + current.getInterval());
+            five.setText(String.format("Awake :%s", current.getInterval()));
             view.setBackgroundColor(Color.parseColor("#FFFFF176"));
             five.setTextColor(Color.DKGRAY);
         } else {
-            five.setText("Sleeping :" + current.getInterval());
+            five.setText(String.format("Sleeping :%s", current.getInterval()));
             view.setBackgroundColor(Color.parseColor("#1c3a49"));
             five.setTextColor(Color.WHITE);
         }
@@ -116,7 +123,7 @@ public class Adapter extends BaseAdapter {
         LineDataSet yVals = new LineDataSet(accel, "Accel");
         yVals.setDrawCircleHole(false);
         yVals.setCircleColor(Color.parseColor("#00bed6"));
-        yVals.setCircleSize(1.5f);
+        yVals.setCircleRadius(1.5f);
         yVals.setDrawValues(false);
         yVals.setLineWidth(1.5f);
         yVals.setColor(Color.parseColor("#00bed6"));
@@ -170,7 +177,7 @@ public class Adapter extends BaseAdapter {
         LineDataSet yVals1 = new LineDataSet(light, "Light");
         yVals1.setDrawCircleHole(false);
         yVals1.setCircleColor(Color.parseColor("#00bed6"));
-        yVals1.setCircleSize(1.5f);
+        yVals1.setCircleRadius(1.5f);
         yVals1.setDrawValues(false);
         yVals1.setLineWidth(1.5f);
         yVals1.setColor(Color.parseColor("#00bed6"));
@@ -184,7 +191,7 @@ public class Adapter extends BaseAdapter {
         ArrayList<Integer> stateColors = new ArrayList<>();
         List<String> x2 = new ArrayList<>();
         for (int i = 0; i < screenStates.size(); i++) {
-            if (screenStates.get(i) == true) {
+            if (screenStates.get(i)) {
                 screen.add(new BarEntry(2f, i));
                 stateColors.add(i, Color.parseColor("#27AA0B"));
             } else {

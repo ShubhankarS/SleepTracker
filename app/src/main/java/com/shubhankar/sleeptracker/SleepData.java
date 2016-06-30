@@ -9,23 +9,23 @@ import com.google.gson.annotations.SerializedName;
 public class SleepData {
     @Expose
     @SerializedName("screen_state")
-    boolean screenState;
+    private boolean screenState;
 
     @Expose
     @SerializedName("accelerometer")
-    float accelerometer;
+    private float accelerometer;
 
     @Expose
     @SerializedName("light")
-    float light;
+    private float light;
 
     @Expose
     @SerializedName("time")
-    long time;
+    private long time;
 
     @Expose
     @SerializedName("end_time")
-    long endTime;
+    private long endTime;
 
     public long getTime() {
         return time;
@@ -64,11 +64,7 @@ public class SleepData {
         if (getAccelerometer() >= 1.1 || getAccelerometer() <= 0.8) {
             move = true;
         }
-        if (!getScreenState() && !move && getLight() < 15.0f) {
-            return true;
-        } else {
-            return false;
-        }
+        return !getScreenState() && !move && getLight() < 15.0f;
     }
 
 
