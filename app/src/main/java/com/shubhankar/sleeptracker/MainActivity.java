@@ -64,15 +64,15 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
             Log.d("Size after", "preliminary grouping " + finaldata.size());
 
             //group datasets removing interrupts
-            ArrayList<SleepState> cumilativeData = finaldata;
+            ArrayList<SleepState> cumulativeData = finaldata;
 
-//            for (int i = 1; i <= 1; i++) {
-//                cumilativeData = cleanData(cumilativeData, 2 * i, i);
-//                Log.d("Size after", i + " cleanups = " + cumilativeData.size());
-//            }
+            for (int i = 1; i <= 6; i++) {
+                cumulativeData = cleanData(cumulativeData, 2 * i, i);
+                Log.d("Size after", i + " cleanups = " + cumulativeData.size());
+            }
 
-//            cumilativeData = removeNonSleep(cumilativeData, 5 * 60);
-            Adapter adapter = new Adapter(cumilativeData, this);
+//            cumulativeData = removeNonSleep(cumulativeData, 5 * 60);
+            Adapter adapter = new Adapter(cumulativeData, this);
             listView.setAdapter(adapter);
         }
 
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
                 if (start == 0) {
                     start = currData.getTime();
                 }
-                accelerometerReadings.add(currData.getAccelerator());
+                accelerometerReadings.add(currData.getAccelerometer());
                 lightReadings.add(currData.getLight());
                 screenStates.add(currData.getScreenState());
             } else {
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
                 screenStates = new ArrayList<>();
 
                 //Add first value to new ArrayLists
-                accelerometerReadings.add(currData.getAccelerator());
+                accelerometerReadings.add(currData.getAccelerometer());
                 lightReadings.add(currData.getLight());
                 screenStates.add(currData.getScreenState());
 

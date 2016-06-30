@@ -1,13 +1,30 @@
 package com.shubhankar.sleeptracker;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Shubhankar on 24/02/16.
  */
 public class SleepData {
-
+    @Expose
+    @SerializedName("screen_state")
     boolean screenState;
-    float accelerator, light, noise;
+
+    @Expose
+    @SerializedName("accelerometer")
+    float accelerometer;
+
+    @Expose
+    @SerializedName("light")
+    float light;
+
+    @Expose
+    @SerializedName("time")
     long time;
+
+    @Expose
+    @SerializedName("end_time")
     long endTime;
 
     public long getTime() {
@@ -26,12 +43,12 @@ public class SleepData {
         this.screenState = screenState;
     }
 
-    public float getAccelerator() {
-        return accelerator;
+    public float getAccelerometer() {
+        return accelerometer;
     }
 
-    public void setAccelerator(float accelerator) {
-        this.accelerator = accelerator;
+    public void setAccelerometer(float accelerometer) {
+        this.accelerometer = accelerometer;
     }
 
     public float getLight() {
@@ -42,18 +59,9 @@ public class SleepData {
         this.light = light;
     }
 
-    public float getNoise() {
-        return noise;
-    }
-
-    public void setNoise(float noise) {
-        this.noise = noise;
-    }
-
-
     Boolean getCase() {
         boolean move = false;
-        if (getAccelerator() >= 1.1 || getAccelerator() <= 0.8) {
+        if (getAccelerometer() >= 1.1 || getAccelerometer() <= 0.8) {
             move = true;
         }
         if (!getScreenState() && !move && getLight() < 15.0f) {

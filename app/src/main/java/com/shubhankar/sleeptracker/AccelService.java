@@ -29,16 +29,12 @@ import java.util.List;
  */
 public class AccelService extends Service implements SensorEventListener {
     private SensorManager mSensMan;
-    private Sensor accel, light;
+    private Sensor accelerometer, light;
     boolean moving;
     boolean walk;
-    long startservice;
+    long startService;
     SharedPreferences preference;
-    String walkkey = "com.touchKin.touchkinapp.Dashboards.services.lastwalktime";
-    String movekey = "com.touchKin.touchkinapp.Dashboards.services.lastmovetime";
-    long lastwalktime;
-    long lastmovetime;
-    float relgrav;
+    float relativeGravity;
     //some notification parameters
     NotificationManager notificationManager;
 
@@ -59,47 +55,21 @@ public class AccelService extends Service implements SensorEventListener {
         screenState();
 
         Log.v("Accel servicestarted", "AccelserviceStarted");
-        //initialize sensormanager
+        //initialize sensorManager
         mSensMan = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         //initialize accelerometer
-        accel = mSensMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        accelerometer = mSensMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         light = mSensMan.getDefaultSensor(Sensor.TYPE_LIGHT);
+
         //get current time
         Calendar cal = Calendar.getInstance();
-        startservice = cal.getTimeInMillis();
-        Log.v("Curent time", startservice + "");
+        startService = cal.getTimeInMillis();
+        Log.v("Current time", startService + "");
 
-        //obtain last walk time stored in shared pref, if null, store present time in shared pref
-//        lastwalktime = (preference.getLong(walkkey, startservice));
-//
-//        if (lastwalktime == startservice) {
-//            preference.edit().putLong(walkkey, startservice).apply();
-//        }
-//        //obtain last move time
-//        lastmovetime = (preference.getLong(movekey, startservice));
-//
-//        if (lastmovetime == startservice) {
-//            preference.edit().putLong(movekey, startservice).apply();
-//        }
-
-
-//        Log.v("Walk time", lastwalktime + "");
-
-        //stop service if time since last walk detected is less than 15 mins
-//        if ((startservice - lastwalktime < 15 * 60 * 1000)) {
-//            Log.v("Service stopped", "Walk detected within 15 min of now");
-//            stopSelf();
-//        } else
-//            //or if movement was there in the past 5 min that didnt qualify as walk
-//            if (startservice - lastmovetime <= 5 * 60 * 1000) {
-//                Log.v("Service stopped", "non walk movement detected within 5 min of now");
-//                stopSelf();
-//            } else {
         //register accelerometer listener
-        mSensMan.registerListener(this, accel, SensorManager.SENSOR_DELAY_NORMAL);
+        mSensMan.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensMan.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL);
-//            }
     }
 
     @Override
@@ -133,23 +103,23 @@ public class AccelService extends Service implements SensorEventListener {
 //                Log.d("NOW", "" + now);
 
                 //monitor raw data for first 2 seconds, can be skipped as soon as a movement is detected
-                if ((!(now - startservice >= 2 * 1000) || relgrav == 0.0f) && !moving) {
+                if ((!(now - startService >= 2 * 1000) || relativeGravity == 0.0f) && !moving) {
                     //initialize values for sensor event
                     float[] value = sensorEvent.values;
-                    float x = Float.valueOf(value[0]);
-                    float y = Float.valueOf(value[1]);
-                    float z = Float.valueOf(value[2]);
+                    float x = value[0];
+                    float y = value[1];
+                    float z = value[2];
                     //check the current accelerometer val relative to earths gravity
-                    relgrav = (x * x + y * y + z * z) / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
+                    relativeGravity = (x * x + y * y + z * z) / (SensorManager.GRAVITY_EARTH * SensorManager.GRAVITY_EARTH);
                     //user is moving if rg more than 1.1 or less than 0.9
-//                    Log.d("Relgraph", "" + relgrav);
-                    if (relgrav >= 1.1 || relgrav <= 0.8) {
+//                    Log.d("RelativeGravity", "" + relativeGravity);
+                    if (relativeGravity >= 1.1 || relativeGravity <= 0.8) {
                         //movement is happening
-//                        Log.d("Moving", "Some movement is present" + relgrav);
+//                        Log.d("Moving", "Some movement is present" + relativeGravity);
                         moving = true;
                     } else {
                         //user is not moving
-//                        Log.d("Not moving", "No movement" + relgrav);
+//                        Log.d("Not moving", "No movement" + relativeGravity);
                     }
 
                 } else {
@@ -163,7 +133,7 @@ public class AccelService extends Service implements SensorEventListener {
     }
 
     private void stopService() {
-        mSensMan.unregisterListener(this, accel);
+        mSensMan.unregisterListener(this, accelerometer);
         mSensMan.unregisterListener(this, light);
         stopSelf();
 
@@ -196,14 +166,14 @@ public class AccelService extends Service implements SensorEventListener {
         if (sleepDataList == null)
             sleepDataList = new ArrayList<>();
         sleepData.setTime(System.currentTimeMillis());
-        sleepData.setAccelerator(relgrav);
+        sleepData.setAccelerometer(relativeGravity);
         Gson gsonq = new Gson();
         String json12 = gsonq.toJson(sleepData);
         Log.d("finaly_data", json12);
         sleepDataList.add(sleepData);
         Gson gson = new Gson();
         String json = gson.toJson(sleepDataList);
-        preference.edit().putString(MainActivity.DATA_LIST, json).commit();
+        preference.edit().putString(MainActivity.DATA_LIST, json).apply();
         super.onDestroy();
         Log.v("AccelService", "AccelService stopped");
     }

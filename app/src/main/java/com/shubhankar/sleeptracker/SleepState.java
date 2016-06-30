@@ -1,13 +1,30 @@
 package com.shubhankar.sleeptracker;
 
-import java.text.SimpleDateFormat;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by Shubhankar on 25/02/16.
  */
 public class SleepState {
+    @Expose
+    @SerializedName("start_time")
+    long startTime;
+
+    @Expose
+    @SerializedName("end_time")
+    long endTime;
+
+    @Expose
+    @SerializedName("is_sleeping")
+    boolean isSleeping;
+
+    ArrayList<Float> lightReadings, accelerometerReadings;
+    ArrayList<Boolean> screenStates;
 
     public long getStartTime() {
         return startTime;
@@ -34,18 +51,8 @@ public class SleepState {
     }
 
     public String getInterval() {
-        String interval = "";
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy hh:mm:ss");
-        Date date = new Date();
-
-        date.setTime(getStartTime());
-
-        interval = sdf.format(date);
-
-        date.setTime(getEndTime());
-
-        interval = interval + " - " + sdf.format(date);
+        String interval = new DateTime(getStartTime()).toString("dd/MM/yy hh:mm:ss");
+        interval = interval + " - " + new DateTime(getEndTime()).toString("dd/MM/yy hh:mm:ss");
 
         int duration = (int) getDuration();
         if (duration >= 60) {
@@ -98,9 +105,4 @@ public class SleepState {
     public void addScreenData(ArrayList<Boolean> newData) {
         this.screenStates.addAll(newData);
     }
-
-    long startTime, endTime;
-    boolean isSleeping;
-    ArrayList<Float> lightReadings, accelerometerReadings;
-    ArrayList<Boolean> screenStates;
 }
