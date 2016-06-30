@@ -23,14 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by mantralab on 24/02/16.
+ * Created by Shubhankar on 24/02/16.
  */
 public class Adapter extends BaseAdapter {
 
     List<SleepState> sleepDatas;
+    private ViewLongClickListener mListener;
 
-    Adapter(List<SleepState> sleepDatas) {
+    Adapter(List<SleepState> sleepDatas, ViewLongClickListener mListener) {
         this.sleepDatas = sleepDatas;
+        this.mListener = mListener;
     }
 
     @Override
@@ -244,8 +246,18 @@ public class Adapter extends BaseAdapter {
 
         screenChart.setData(new BarData(x2, yVals2));
 
-
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mListener.saveViewAsBitmap(v);
+                return false;
+            }
+        });
         return view;
 
+    }
+
+    public interface ViewLongClickListener {
+        void saveViewAsBitmap(View v);
     }
 }

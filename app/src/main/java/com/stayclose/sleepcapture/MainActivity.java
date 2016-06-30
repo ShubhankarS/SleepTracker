@@ -4,23 +4,34 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.joda.time.DateTime;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Adapter.ViewLongClickListener {
 
     public static final String DATA_LIST = "SLEEP_DATA";
 
@@ -35,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             List<SleepData> sleepData = new ArrayList<>();
             Gson gson = new Gson();
             String dataList = gson.toJson(sleepData);
-            sharedPreferences.edit().putString(DATA_LIST, dataList).commit();
+            sharedPreferences.edit().putString(DATA_LIST, dataList).apply();
         } else {
             String data = sharedPreferences.getString(DATA_LIST, "nothing inside");
 
@@ -55,13 +66,13 @@ public class MainActivity extends AppCompatActivity {
             //group datasets removing interrupts
             ArrayList<SleepState> cumilativeData = finaldata;
 
-            for (int i = 1; i <= 7; i++) {
-                cumilativeData = cleanData(cumilativeData, 2 * i, i);
-                Log.d("Size after", i + " cleanups = " + cumilativeData.size());
-            }
+//            for (int i = 1; i <= 1; i++) {
+//                cumilativeData = cleanData(cumilativeData, 2 * i, i);
+//                Log.d("Size after", i + " cleanups = " + cumilativeData.size());
+//            }
 
 //            cumilativeData = removeNonSleep(cumilativeData, 5 * 60);
-            Adapter adapter = new Adapter(cumilativeData);
+            Adapter adapter = new Adapter(cumilativeData, this);
             listView.setAdapter(adapter);
         }
 
@@ -181,4 +192,50 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void saveViewAsBitmap(View v) {
+        Log.d("Long clicked view", "now");
+        v.setDrawingCacheEnabled(true);
+        v.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        v.buildDrawingCache(true);
+        Bitmap viewBitmap = v.getDrawingCache();
+
+        String file_path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath()
+                + "/SleepGraphs";
+        File dir = new File(file_path);
+        if (!dir.exists()) {
+            boolean mkdirs = dir.mkdirs();
+        }
+
+        String imageName = "graph" + new DateTime().toString("YYYY-MM-DD(") + new Random().nextInt(10) + ").jpeg";
+        File imageFile = new File(dir, imageName);
+
+        try {
+            FileOutputStream fOut = new FileOutputStream(imageFile);
+
+            viewBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //inform that media is mounted
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            Intent mediaScanIntent = new Intent(
+                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(imageFile);
+            mediaScanIntent.setData(contentUri);
+            getApplicationContext().sendBroadcast(mediaScanIntent);
+        } else {
+            sendBroadcast(new Intent(
+                    Intent.ACTION_MEDIA_MOUNTED,
+                    Uri.parse("file://"
+                            + Environment.getExternalStorageDirectory())));
+        }
+
+        v.setDrawingCacheEnabled(false);
+        Toast.makeText(getApplicationContext(), "Image saved to " + imageName, Toast.LENGTH_LONG).show();
+
+    }
 }

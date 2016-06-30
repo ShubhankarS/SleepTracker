@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by mantralab on 25/02/16.
+ * Created by Shubhankar on 25/02/16.
  */
 public class SleepState {
 

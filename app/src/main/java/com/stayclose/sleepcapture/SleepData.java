@@ -1,7 +1,7 @@
 package com.stayclose.sleepcapture;
 
 /**
- * Created by mantralab on 24/02/16.
+ * Created by Shubhankar on 24/02/16.
  */
 public class SleepData {
 
