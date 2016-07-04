@@ -1,15 +1,19 @@
 package com.shubhankar.sleeptracker;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -195,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
     @Override
     public void saveViewAsBitmap(View v) {
         Log.d("Long clicked view", "now");
+        hasStoragePermission();
         v.setDrawingCacheEnabled(true);
         v.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         v.buildDrawingCache(true);
@@ -216,8 +221,11 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
             viewBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             fOut.flush();
             fOut.close();
+            Toast.makeText(getApplicationContext(), "Image saved to " + imageName, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
+
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Could not save image :(", Toast.LENGTH_LONG).show();
         }
 
         //inform that media is mounted
@@ -235,7 +243,34 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
         }
 
         v.setDrawingCacheEnabled(false);
-        Toast.makeText(getApplicationContext(), "Image saved to " + imageName, Toast.LENGTH_LONG).show();
+    }
 
+    private boolean hasStoragePermission() {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Log.d("Write storagepermission", "Not granted, Requesting now");
+                requestPermissions(new String[]
+                        {Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_CONTACTS}, 69);
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 69:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getApplicationContext(), "You can now save graphs to storage", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Need storage permission to save graphs to storage", Toast.LENGTH_LONG).show();
+                }
+        }
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
