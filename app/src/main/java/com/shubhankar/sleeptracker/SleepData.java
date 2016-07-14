@@ -1,5 +1,7 @@
 package com.shubhankar.sleeptracker;
 
+import android.hardware.SensorManager;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -61,10 +63,10 @@ public class SleepData {
 
     Boolean getCase() {
         boolean move = false;
-        if (getAccelerometer() >= 1.1 || getAccelerometer() <= 0.8) {
+        if (getAccelerometer() >= 1.2 || getAccelerometer() <= 0.8) {
             move = true;
         }
-        return !getScreenState() && !move && getLight() < 15.0f;
+        return !getScreenState() && !move;
     }
 
 

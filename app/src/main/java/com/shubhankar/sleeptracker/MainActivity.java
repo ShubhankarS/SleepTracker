@@ -60,41 +60,63 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
             Type listType = new TypeToken<ArrayList<SleepData>>() {
             }.getType();
 
-            //obtained stored datapoints
-            ArrayList<SleepData> sleepDatas = gson.fromJson(data, listType);
+            //obtained stored data points
+            ArrayList<SleepData> sleepData = gson.fromJson(data, listType);
+
+            //remove data older than x days
+            int x = 4;
+            sleepData = removeOldData(sleepData, new DateTime().minusDays(x).getMillis());
+            int rawCount = sleepData.size();
 
             //group data points
-            ArrayList<SleepState> finaldata = groupData(sleepDatas);
-            Log.d("Size after", "preliminary grouping " + finaldata.size());
+            ArrayList<SleepState> finalData = groupData(sleepData);
+            Log.d("Size after", "preliminary grouping " + finalData.size());
 
-            //group datasets removing interrupts
-            ArrayList<SleepState> cumulativeData = finaldata;
+            //group dataSets removing interrupts
+            ArrayList<SleepState> cumulativeData = finalData;
 
-            for (int i = 1; i <= 6; i++) {
+            //cleaning of data as per required amount of smoothing
+            for (int i = 1; i <= 1; i++) {
                 cumulativeData = cleanData(cumulativeData, 2 * i, i);
                 Log.d("Size after", i + " cleanups = " + cumulativeData.size());
             }
 
-//            cumulativeData = removeNonSleep(cumulativeData, 5 * 60);
+            //remove non sleep entries that are below a threshold
+            cumulativeData = removeNonSleep(cumulativeData, 3 * 60);
+            if (rawCount > x * 360) {
+                Toast.makeText(getApplicationContext(), "You slept well for " + cumulativeData.size() + " days", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "We did not get good data for past " + x + " days", Toast.LENGTH_LONG).show();
+            }
             Adapter adapter = new Adapter(cumulativeData, this);
             listView.setAdapter(adapter);
         }
 
     }
 
-    private ArrayList<SleepState> removeNonSleep(ArrayList<SleepState> cumilativeData, int minSleep) {
-        Iterator<SleepState> iterator = cumilativeData.iterator();
+    private ArrayList<SleepData> removeOldData(ArrayList<SleepData> sleepData, long threshold) {
+        ArrayList<SleepData> latest = new ArrayList<>();
+        for (SleepData entry : sleepData) {
+            if (entry.getTime() >= threshold) {
+                latest.add(entry);
+            }
+        }
+        return latest;
+    }
+
+    private ArrayList<SleepState> removeNonSleep(ArrayList<SleepState> cumulativeData, int thresholdInMin) {
+        Iterator<SleepState> iterator = cumulativeData.iterator();
         while (iterator.hasNext()) {
-            SleepState tempp = iterator.next();
-            if (!tempp.isSleeping() || tempp.getDuration() <= minSleep) {
+            SleepState temp = iterator.next();
+            if (!temp.isSleeping() || temp.getDuration() <= thresholdInMin) {
                 iterator.remove();
             }
         }
-        return cumilativeData;
+        return cumulativeData;
     }
 
-    private ArrayList<SleepState> groupData(ArrayList<SleepData> sleepDatas) {
-        Log.d("Size of raw points", "" + sleepDatas.size());
+    private ArrayList<SleepState> groupData(ArrayList<SleepData> sleepData) {
+        Log.d("Size of raw points", "" + sleepData.size());
 
         ArrayList<SleepState> finalData = new ArrayList<>();
         Boolean sleeping = null;
@@ -104,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
         ArrayList<Float> lightReadings = new ArrayList<>();
         ArrayList<Boolean> screenStates = new ArrayList<>();
 
-        for (SleepData currData : sleepDatas) {
+        for (SleepData currData : sleepData) {
 
             if (sleeping == null) {
                 sleeping = currData.getCase();
@@ -142,13 +164,13 @@ public class MainActivity extends AppCompatActivity implements Adapter.ViewLongC
 
             }
         }
-        int size = sleepDatas.size();
+        int size = sleepData.size();
         if (size > 0) {
             SleepState temp = new SleepState();
 
             temp.setIsSleeping(sleeping);
             temp.setStartTime(start);
-            temp.setEndTime(sleepDatas.get(size > 0 ? (size - 1) : size).getTime());
+            temp.setEndTime(sleepData.get(size > 0 ? (size - 1) : size).getTime());
             temp.setScreenStates(screenStates);
             temp.setAccelerometerReadings(accelerometerReadings);
             temp.setLightReadings(lightReadings);
